@@ -6,10 +6,10 @@ class Search extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      states: [],
-      requestedStateName: '',
-      interestedStateObjs: [],
-      interestedStateObj: ''
+      provinces: [],
+      provinceInput: '',
+      selectedProvincesArray: [],
+      provinceObj: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,23 +18,27 @@ class Search extends React.Component {
 
   
   handleChange(event) {
-    this.setState({ requestedStateName: event.target.value })
+    this.setState({ provinceInput: event.target.value })
   }
 
 //Handles what happens once user selects "Submit"
   handleSubmit(event) {
-    //Querying states for state user specified 
-    this.state.states.map(element => {
-      if (element.province.toLowerCase() === this.state.requestedStateName.toLowerCase()) {
-        this.setState({ interestedStateObj: element})
-        this.setState({interestedStateObjs: this.state.interestedStateObjs + this.state.interestedStateObj})
+    //Querying provinces for state user specified 
+    this.state.provinces.map(element => {
+      if (element.province.toLowerCase() === this.state.provinceInput.toLowerCase()) {
+        this.setState({ provinceObj: element})
+      //this.setState({selectedProvincesArray: this.state.selectedProvincesArray.push(this.state.provinceObj)})
+        this.setState({ selectedProvincesArray: this.state.selectedProvincesArray.push('44')})
+
+        
+        //this.setState({selectedProvincesArray: [this.state.selectedProvincesArray,this.state.provinceObj]})
+        
+
       }
        
     })
-    console.log(this.state.interestedStateObj)
-    console.log(this.state.interestedStateObjs)
-
-    
+    console.log(this.state.selectedProvincesArray)   
+    console.log(this.state.selectedProvincesArray[0])   
     event.preventDefault(); //Stops page from refreshing once submit is clicked
   }
 
@@ -49,13 +53,9 @@ class Search extends React.Component {
       }
     })
       .then(res => res.json())
-      .then(data => { this.setState({ states: data.countryDataToJSON[0].provinces }) })
+      .then(data => { this.setState({ provinces: data.countryDataToJSON[0].provinces }) })
 
   }
-  //Updates the table if user selects new state
-  // componentDidUpdate() {
-
-  // }
 
   render() {
     return (
@@ -63,10 +63,11 @@ class Search extends React.Component {
         <div id="searchTool">
           <h2 >Covid-19 Data by Province:</h2>
           <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Enter Province" value={this.state.requestedStateName} onChange={this.handleChange}></input>
+            <input type="text" placeholder="Enter Province" value={this.state.provinceInput} onChange={this.handleChange}></input>
             <input type="submit" ></input>
           </form>
         </div>
+        
         <table>
           <tr>
             <th>Province</th>
@@ -75,14 +76,15 @@ class Search extends React.Component {
             <th>Deaths</th>
             <th>Active</th>
           </tr>
-          {/* <tr>
-            <th>{this.state.interestedStateObj.province}</th> 
-            <th>{this.state.interestedStateObj.confirmed}</th>
-            <th>{this.state.interestedStateObj.recovered}</th>
-            <th>{this.state.interestedStateObj.deaths}</th>
-            <th>{this.state.interestedStateObj.active}</th>
-          </tr> */}
+          <tr>
+            <th>{this.state.provinceObj.province}</th> 
+            <th>{this.state.provinceObj.confirmed}</th> 
+            <th>{this.state.provinceObj.recovered}</th> 
+            <th>{this.state.selectedProvincesArray[0]}</th> 
+            <th>{this.state.selectedProvincesArray[0]}</th> 
+          </tr>
         </table>
+
       </div>
     )
   }
