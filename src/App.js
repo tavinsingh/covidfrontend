@@ -7,20 +7,34 @@ class Search extends React.Component {
     super(props)
     this.state = {
       states: [],
-      stateName: ''
+      requestedStateName: '',
+      interestedStateObjs: [],
+      interestedStateObj: ''
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
 
   }
 
-  //Handles what happens once user selects "Submit"
+  
   handleChange(event) {
-    this.setState({ stateName: event.target.value })
+    this.setState({ requestedStateName: event.target.value })
   }
 
+//Handles what happens once user selects "Submit"
   handleSubmit(event) {
-    alert('Name is ' + this.state.stateName)
+    //Querying states for state user specified 
+    this.state.states.map(element => {
+      if (element.province.toLowerCase() === this.state.requestedStateName.toLowerCase()) {
+        this.setState({ interestedStateObj: element})
+        this.setState({interestedStateObjs: this.state.interestedStateObjs + this.state.interestedStateObj})
+      }
+       
+    })
+    console.log(this.state.interestedStateObj)
+    console.log(this.state.interestedStateObjs)
+
+    
     event.preventDefault(); //Stops page from refreshing once submit is clicked
   }
 
@@ -36,54 +50,42 @@ class Search extends React.Component {
     })
       .then(res => res.json())
       .then(data => { this.setState({ states: data.countryDataToJSON[0].provinces }) })
-      .then(stateObj => console.log('State name is ' + this.state.stateName))
-  }
-
-  componentDidUpdate() {
-    console.log('Updated version of state name: ' + this.state.stateName)
-
 
   }
+  //Updates the table if user selects new state
+  // componentDidUpdate() {
+
+  // }
 
   render() {
     return (
       <div>
         <div id="searchTool">
-          <h2 >Search State Data:</h2>
+          <h2 >Covid-19 Data by Province:</h2>
           <form onSubmit={this.handleSubmit}>
-            <input type="text" value={this.state.stateName} onChange={this.handleChange}></input>
+            <input type="text" placeholder="Enter Province" value={this.state.requestedStateName} onChange={this.handleChange}></input>
             <input type="submit" ></input>
           </form>
         </div>
-
-        <ul>
-          {this.state.states.map(element => {
-            return <div>
-              <li> {element.province}</li>
-              <li> {element.confirmed}</li>
-              
-            </div>
-          })}
-        </ul>
+        <table>
+          <tr>
+            <th>Province</th>
+            <th>Confirmed</th>
+            <th>Recovered</th>
+            <th>Deaths</th>
+            <th>Active</th>
+          </tr>
+          {/* <tr>
+            <th>{this.state.interestedStateObj.province}</th> 
+            <th>{this.state.interestedStateObj.confirmed}</th>
+            <th>{this.state.interestedStateObj.recovered}</th>
+            <th>{this.state.interestedStateObj.deaths}</th>
+            <th>{this.state.interestedStateObj.active}</th>
+          </tr> */}
+        </table>
       </div>
-    );
+    )
   }
 }
-
-
-// function GetAllStates() {
-//   fetch('http://localhost:9000/homepage', {
-// 'method': 'GET',
-// headers: {
-// 'x-rapidapi-host': 'covid-19-data.p.rapidapi.com',
-// 'x-rapidapi-key': 'a9e6f4bf49msh62b7508fc86ea21p1b8fa8jsnde25c251bc62',
-// useQueryString: true
-
-// }
-// })
-// .then(res => res.json())
-// .then(data => {this.setState({ states: data.countryDataToJSON[0].provinces})})
-
-// }
 
 export default Search;
